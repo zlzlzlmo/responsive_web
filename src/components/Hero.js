@@ -96,7 +96,7 @@ const HeroContent = styled.div`
   position: relative;
   z-index: 10;
   color: #fff;
-  width: calc(100% - 100px);
+  width: calc(100% - 15%);
   display: flex;
   flex-direction: column;
   max-width: 1600px;
