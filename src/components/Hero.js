@@ -1,33 +1,60 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import styled, { css } from "styled-components/macro";
 import { SliderData } from "../data/SliderData";
 import { Button } from "./Button";
 import { IoMdArrowRoundForward } from "react-icons/io";
 import { IoArrowForward, IoArrowBack } from "react-icons/io5";
+import { useEffect } from "react";
 const Hero = () => {
+  const [current, setCurrent] = useState(0);
+  const length = SliderData.length;
+  const timeout = useRef(null);
+
+  useEffect(() => {
+    const nextSlide = () => {
+      setCurrent((current) => (current === length - 1 ? 0 : current + 1));
+    };
+    const autoSlide = setTimeout(nextSlide, 3000);
+
+    return () => {
+      clearTimeout(autoSlide);
+    };
+  }, [current, length]);
+
+  const nextSlide = () => {
+    setCurrent(current === length - 1 ? 0 : current + 1);
+    console.log(current);
+  };
+
+  const prevSlide = () => {
+    setCurrent(current === 0 ? length - 1 : current - 1);
+    console.log(current);
+  };
   return (
     <HeroSection>
       <HeroWrapper>
         {SliderData.map((slide, index) => {
           return (
             <HeroSlide key={index}>
-              <HereSlider>
-                <HeroImage src="/images/jeon.jpeg" alt={slide.alt} />
-                <HeroContent>
-                  <h1>{slide.title}</h1>
-                  <p>{slide.description}</p>
-                  <Button to={slide.path} primary="true">
-                    {slide.label}
-                    <Arrow />
-                  </Button>
-                </HeroContent>
-              </HereSlider>
+              {current === index && (
+                <HereSlider>
+                  <HeroImage src={slide.image} alt={slide.alt} />
+                  <HeroContent>
+                    <h1>{slide.title}</h1>
+                    <p>{slide.description}</p>
+                    <Button to={slide.path} primary="true">
+                      {slide.label}
+                      <Arrow />
+                    </Button>
+                  </HeroContent>
+                </HereSlider>
+              )}
             </HeroSlide>
           );
         })}
         <SliderButtons>
-          <PrevArrow />
-          <NextArrow />
+          <PrevArrow onClick={prevSlide} />
+          <NextArrow onClick={nextSlide} />
         </SliderButtons>
       </HeroWrapper>
     </HeroSection>
@@ -113,7 +140,10 @@ const HeroContent = styled.div`
     text-shadow: 0px 0px 0px rgba(0, 0, 0, 0.4);
   }
 `;
-const Arrow = styled(IoMdArrowRoundForward)``;
+const Arrow = styled(IoMdArrowRoundForward)`
+  margin-left: 0.4rem;
+  font-size: 1.1rem;
+`;
 
 const SliderButtons = styled.div`
   position: absolute;
